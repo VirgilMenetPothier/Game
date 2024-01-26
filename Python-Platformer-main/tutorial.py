@@ -2,6 +2,7 @@ import os
 import random
 import math
 import pygame
+import sys
 from os import listdir
 from os.path import isfile, join
 pygame.init()
@@ -11,6 +12,7 @@ pygame.display.set_caption("Platformer")
 WIDTH, HEIGHT = 1000, 800
 FPS = 60
 PLAYER_VEL = 5
+LIFE = 3
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -83,8 +85,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += dx
         self.rect.y += dy
 
-    def make_hit(self):
+    def make_hit(self, life):
         self.hit = True
+        life = life -1
 
     def move_left(self, vel):
         self.x_vel = -vel
@@ -257,7 +260,7 @@ def collide(player, objects, dx):
     return collided_object
 
 
-def handle_move(player, objects):
+def handle_move(player, objects, life):
     keys = pygame.key.get_pressed()
 
     player.x_vel = 0
@@ -274,7 +277,8 @@ def handle_move(player, objects):
 
     for obj in to_check:
         if obj and obj.name == "fire":
-            player.make_hit()
+            player.make_hit(life)
+            player.jump()
 
 
 def main(window):
@@ -286,10 +290,18 @@ def main(window):
     player = Player(100, 100, 50, 50)
     fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size)
-             for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
-    objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size),
-               Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire]
+    floor_1 = [Block(i * block_size, HEIGHT - block_size, block_size)
+             for i in range(-WIDTH // block_size, (WIDTH) // block_size)]
+    objects = [*floor_1, Block(block_size, HEIGHT - block_size * 2, block_size),
+               Block(block_size * 3, HEIGHT - block_size * 4, block_size),
+               Block(block_size * 6, HEIGHT - block_size * 6, block_size),
+               Block(block_size * 10, HEIGHT - block_size * 4, block_size),
+               Block(block_size * 15, HEIGHT - block_size, block_size),
+               Block(block_size * 16, HEIGHT - block_size, block_size),
+               Block(block_size * 17, HEIGHT - block_size, block_size),
+               Block(block_size * 18, HEIGHT - block_size, block_size),
+               Block(block_size * 19, HEIGHT - block_size, block_size),
+               Block(block_size * 20, HEIGHT - block_size, block_size),]
 
     offset_x = 0
     scroll_area_width = 200
@@ -309,12 +321,14 @@ def main(window):
 
         player.loop(FPS)
         fire.loop()
-        handle_move(player, objects)
+        handle_move(player, objects, LIFE)
         draw(window, background, bg_image, player, objects, offset_x)
 
         if ((player.rect.right - offset_x >= WIDTH - scroll_area_width) and player.x_vel > 0) or (
                 (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
             offset_x += player.x_vel
+        if LIFE == 0:
+            sys.exit()
 
     pygame.quit()
     quit()
