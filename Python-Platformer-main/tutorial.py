@@ -22,7 +22,7 @@ def flip(sprites):
 
 
 def load_sprite_sheets(dir1, dir2, width, height, direction=False):
-    path = join("assets", dir1, dir2)
+    path = join(dir1, dir2)
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
     all_sprites = {}
@@ -47,7 +47,7 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
 
 
 def get_block(size):
-    path = join("assets", "Terrain", "Terrain.png")
+    path = join("Terrain", "Terrain.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
     rect = pygame.Rect(96, 0, size, size)
@@ -173,7 +173,7 @@ class Block(Object):
         self.image.blit(block, (0, 0))
         self.mask = pygame.mask.from_surface(self.image)
 
-
+'''
 class Fire(Object):
     ANIMATION_DELAY = 3
 
@@ -203,10 +203,10 @@ class Fire(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
-
+'''
 
 def get_background(name):
-    image = pygame.image.load(join("assets", "Background", name))
+    image = pygame.image.load(join("Background", name))
     _, _, width, height = image.get_rect()
     tiles = []
 
@@ -288,8 +288,6 @@ def main(window):
     block_size = 96
 
     player = Player(100, 100, 50, 50)
-    fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
-    fire.on()
     floor_1 = [Block(i * block_size, HEIGHT - block_size, block_size)
              for i in range(-WIDTH // block_size, (WIDTH) // block_size)]
     objects = [*floor_1, Block(block_size, HEIGHT - block_size * 2, block_size),
@@ -320,7 +318,6 @@ def main(window):
                     player.jump()
 
         player.loop(FPS)
-        fire.loop()
         handle_move(player, objects, LIFE)
         draw(window, background, bg_image, player, objects, offset_x)
 
