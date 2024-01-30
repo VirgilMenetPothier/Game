@@ -122,12 +122,9 @@ class Chess(object):
         for val in self.piece_location.values():
             for value in val.values() :
                 piece_name = value[0]
-                # x, y coordinates of the current piece
                 piece_coord_x, piece_coord_y = value[2]
 
-                # change background color of piece if it is selected
                 if value[1] and len(value[0]) > 5:
-                    # if the piece selected is a black piece
                     if value[0][:5] == "black":
                         self.screen.blit(surface, self.board_locations[piece_coord_x][piece_coord_y])
                         if len(self.moves) > 0:
@@ -136,7 +133,6 @@ class Chess(object):
                                 y_coord = move[1]
                                 if x_coord >= 0 and y_coord >= 0 and x_coord < 8 and y_coord < 8:
                                     self.screen.blit(surface, self.board_locations[x_coord][y_coord])
-                    # if the piece selected is a white piece
                     elif value[0][:5] == "white":
                         self.screen.blit(surface1, self.board_locations[piece_coord_x][piece_coord_y])
                         if len(self.moves) > 0:
@@ -145,17 +141,12 @@ class Chess(object):
                                 y_coord = move[1]
                                 if x_coord >= 0 and y_coord >= 0 and x_coord < 8 and y_coord < 8:
                                     self.screen.blit(surface1, self.board_locations[x_coord][y_coord])
-        
-        # draw all chess pieces
+                                    
         for val in self.piece_location.values():
             for value in val.values() :
-                # name of the piece in the current location
                 piece_name = value[0]
-                # x, y coordinates of the current piece
                 piece_coord_x, piece_coord_y = value[2]
-                # check if there is a piece at the square
                 if(len(value[0]) > 1):
-                    # draw piece on the board
                     self.chess_pieces.draw(self.screen, piece_name, 
                                             self.board_locations[piece_coord_x][piece_coord_y])
 
