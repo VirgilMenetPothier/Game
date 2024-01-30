@@ -9,24 +9,16 @@ import time
 
 class Chess(object):
     def __init__(self, screen, pieces_src, square_coords, square_length):
-        # display surface
         self.screen = screen
-        # create an object of class to show chess pieces on the board
         self.chess_pieces = Piece(pieces_src, cols=6, rows=2)
-        # store coordinates of the chess board squares
         self.board_locations = square_coords
-        # length of the side of a chess board square
         self.square_length = square_length
-        # dictionary to keeping track of player turn
         self.turn = {"black": 0,
                      "white": 0}
 
-        # list containing possible moves for the selected piece
         self.moves = []
-        #
         self.utils = Utils()
 
-        # mapping of piece names to index of list containing piece coordinates on spritesheet
         self.pieces = {
             "white_pawn":   5,
             "white_knight": 3,
@@ -42,40 +34,32 @@ class Chess(object):
             "black_queen":  7
         }
 
-        # list containing captured pieces
         self.captured = []
-        #
         self.winner = ""
 
         self.reset()
     
     def reset(self):
-        # clear moves lists
         self.moves = []
 
-        # randomize player turn
         x = random.randint(0, 1)
         if(x == 1):
             self.turn["black"] = 1
         elif(x == 0):
             self.turn["white"] = 1
 
-        # two dimensonal dictionary containing details about each board location
-        # storage format is [piece_name, currently_selected, x_y_coordinate]
         self.piece_location = {}
         x = 0
         for i in range(97, 105):
             a = 8
             y = 0
             self.piece_location[chr(i)] = {}
-            while a>0:
-                # [piece name, currently selected, board coordinates]
+            while a > 0:
                 self.piece_location[chr(i)][a] = ["", False, [x,y]]
                 a = a - 1
                 y = y + 1
             x = x + 1
 
-        # reset the board
         for i in range(97, 105):
             x = 8
             while x>0:
@@ -108,46 +92,35 @@ class Chess(object):
                 x = x - 1
 
 
-    # 
     def play_turn(self):
-        # white color
         white_color = (255, 255, 255)
-        # create fonts for texts
         small_font = pygame.font.SysFont("comicsansms", 20)
-        # create text to be shown on the game menu
         if self.turn["black"]:
             turn_text = small_font.render("Turn: Black", True, white_color)
         elif self.turn["white"]:
             turn_text = small_font.render("Turn: White", True, white_color)
         
-        # show welcome text
         self.screen.blit(turn_text, 
                       ((self.screen.get_width() - turn_text.get_width()) // 2,
                       10))
         
-        # let player with black piece play
         if(self.turn["black"]):
             self.move_piece("black")
-        # let player with white piece play
         elif(self.turn["white"]):
             self.move_piece("white")
 
-    # method to draw pieces on the chess board
     def draw_pieces(self):
         transparent_green = (0,194,39,170)
         transparent_blue = (28,21,212,170)
 
-        # create a transparent surface
         surface = pygame.Surface((self.square_length, self.square_length), pygame.SRCALPHA)
         surface.fill(transparent_green)
 
         surface1 = pygame.Surface((self.square_length, self.square_length), pygame.SRCALPHA)
         surface1.fill(transparent_blue)
 
-        # loop to change background color of selected piece
         for val in self.piece_location.values():
             for value in val.values() :
-                # name of the piece in the current location
                 piece_name = value[0]
                 # x, y coordinates of the current piece
                 piece_coord_x, piece_coord_y = value[2]
